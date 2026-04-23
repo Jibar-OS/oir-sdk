@@ -62,7 +62,7 @@ As part of a JibarOS tree — `m -j8 oir_sdk_aosp`.
 ## See also
 
 - [`oir-demo`](https://github.com/jibar-os/oir-demo) — a reference app using this SDK
-- [`github.com/jibar-os/docs`](https://github.com/jibar-os/docs) — capability surface + permission model
+- [`github.com/Jibar-OS/jibar-os`](https://github.com/Jibar-OS/jibar-os) — capability surface + permission model
 
 ## Migration status
 
