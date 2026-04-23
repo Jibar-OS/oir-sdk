@@ -4,7 +4,7 @@ Thanks for your interest in JibarOS and the Open Intelligence Runtime (OIR).
 
 ## Getting oriented
 
-Start with [`docs/README.md`](https://github.com/Jibar-OS/jibar-os/blob/main/docs/OVERVIEW.md) — it explains what JibarOS is, what OIR is, and which repo owns what.
+Start with [`docs/README.md`](https://github.com/Jibar-OS/JibarOS/blob/main/docs/OVERVIEW.md) — it explains what JibarOS is, what OIR is, and which repo owns what.
 
 Each repo in the `jibar-os` org has a single purpose:
 
