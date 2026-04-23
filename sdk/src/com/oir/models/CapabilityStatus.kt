@@ -5,7 +5,7 @@
 package com.oir.models
 
 /**
- * Result of [com.oir.Oir.isCapabilityRunnable]. Apps use this to decide
+ * Result of [com.oir.OpenIntelligence.isCapabilityRunnable]. Apps use this to decide
  * whether to surface a capability to the user without paying the cost of a
  * failed submit. Maps 1:1 onto the return codes from the platform AIDL
  * `isCapabilityRunnable(String)` method.

@@ -13,8 +13,8 @@ import com.oir.models.CapabilityStatus
 /**
  * Internal composite that owns the binder-client instance and exposes
  * the three namespace facades. Created once per process (by
- * [com.oir.Oir.installContext] from [OirContextProvider]) and cached
- * as the `Oir.impl` singleton.
+ * [com.oir.OpenIntelligence.installContext] from [OirContextProvider]) and cached
+ * as the `OpenIntelligence.impl` singleton.
  *
  * Two construction paths:
  *   1. `OirImpl(context)` — production: builds a real [OirServiceClient]

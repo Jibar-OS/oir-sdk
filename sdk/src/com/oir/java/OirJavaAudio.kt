@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
- * Java-facing entry point for [Oir.audio]. Same pattern as
+ * Java-facing entry point for [OpenIntelligence.audio]. Same pattern as
  * [OirJavaText] — `suspend` → [CompletableFuture], `Flow` → callback
  * triple + [AutoCloseable] for cancellation.
  *
@@ -38,7 +38,7 @@ public object OirJavaAudio {
     public fun transcribe(pcmPath: String): CompletableFuture<Transcript> {
         val cf = CompletableFuture<Transcript>()
         val job = audioScope.launch {
-            try { cf.complete(Oir.audio.transcribe(pcmPath)) }
+            try { cf.complete(OpenIntelligence.audio.transcribe(pcmPath)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -53,7 +53,7 @@ public object OirJavaAudio {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job = audioScope.launch {
-            Oir.audio.transcribeStream(pcmPath)
+            OpenIntelligence.audio.transcribeStream(pcmPath)
                 .onEach { onChunk.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }
@@ -66,7 +66,7 @@ public object OirJavaAudio {
     public fun synthesize(text: String): CompletableFuture<AudioBuffer> {
         val cf = CompletableFuture<AudioBuffer>()
         val job = audioScope.launch {
-            try { cf.complete(Oir.audio.synthesize(text)) }
+            try { cf.complete(OpenIntelligence.audio.synthesize(text)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -81,7 +81,7 @@ public object OirJavaAudio {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job = audioScope.launch {
-            Oir.audio.synthesizeStream(text)
+            OpenIntelligence.audio.synthesizeStream(text)
                 .onEach { onChunk.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }
@@ -98,7 +98,7 @@ public object OirJavaAudio {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job = audioScope.launch {
-            Oir.audio.vad.states(pcmPath)
+            OpenIntelligence.audio.vad.states(pcmPath)
                 .onEach { onState.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }

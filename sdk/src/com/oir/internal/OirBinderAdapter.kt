@@ -34,7 +34,7 @@ import com.oir.models.VadState
  *
  * **Visibility:** public so the AOSP-companion module in a separate
  * Gradle/Soong module can implement it. Apps should not touch it
- * directly — use the [com.oir.Oir] facade instead. The
+ * directly — use the [com.oir.OpenIntelligence] facade instead. The
  * `com.oir.internal` package is excluded from the documented API
  * surface and subject to change without notice.
  */

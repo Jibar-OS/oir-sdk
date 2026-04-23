@@ -20,16 +20,16 @@ import com.oir.models.CapabilityStatus
  * // ContentProvider during app start-up. Just call through the
  * // namespace facades from any coroutine context:
  *
- * val completion = Oir.text.complete("Summarise this: ...")
+ * val completion = OpenIntelligence.text.complete("Summarise this: ...")
  *
  * // Streaming:
- * Oir.text.completeStream("...").collect { chunk ->
+ * OpenIntelligence.text.completeStream("...").collect { chunk ->
  *     renderToken(chunk.text)
  * }
  *
  * // Feature-detect before submitting:
- * if (Oir.isCapabilityRunnable("vision.describe") == CapabilityStatus.RUNNABLE) {
- *     Oir.vision.describe("/sdcard/DCIM/photo.jpg")
+ * if (OpenIntelligence.isCapabilityRunnable("vision.describe") == CapabilityStatus.RUNNABLE) {
+ *     OpenIntelligence.vision.describe("/sdcard/DCIM/photo.jpg")
  * }
  * ```
  *
@@ -59,7 +59,7 @@ import com.oir.models.CapabilityStatus
  * per-submit priority parameter until the scheduler is real — same
  * rationale as before.
  */
-public object Oir {
+public object OpenIntelligence {
 
     @Volatile
     private var impl: OirImpl? = null
@@ -138,8 +138,8 @@ public object Oir {
 
     private fun requireImpl(): OirImpl = impl
         ?: throw OirWorkerUnavailableException(
-            "Oir.installContext(context) was not called and OirContextProvider is missing " +
+            "OpenIntelligence.installContext(context) was not called and OirContextProvider is missing " +
             "from the merged manifest. Either add the provider back (default) or call " +
-            "Oir.installContext(applicationContext) from Application.onCreate().",
+            "OpenIntelligence.installContext(applicationContext) from Application.onCreate().",
         )
 }

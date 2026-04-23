@@ -11,7 +11,7 @@ import com.oir.models.TokenChunk
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Vision-namespace capabilities exposed through [Oir.vision].
+ * Vision-namespace capabilities exposed through [OpenIntelligence.vision].
  *
  * Requires `oir.permission.USE_VISION` (dangerous). Image parameters
  * are file paths (not [android.net.Uri] / [android.graphics.Bitmap])

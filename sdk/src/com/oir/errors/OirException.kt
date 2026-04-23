@@ -29,7 +29,7 @@ public sealed class OirException(
  * on this device — typically because the default model is not baked in, or
  * because a required sidecar file (tokeniser, phoneme map, OCR rec vocab)
  * is missing. Apps that encounter this should either feature-detect via
- * [com.oir.Oir.isCapabilityRunnable] before submitting or surface an OEM
+ * [com.oir.OpenIntelligence.isCapabilityRunnable] before submitting or surface an OEM
  * install prompt to the user.
  *
  * Corresponds to worker error code `CAPABILITY_UNAVAILABLE_NO_MODEL = 9`.

@@ -12,7 +12,7 @@ import com.oir.models.TranslationOptions
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Text-namespace capabilities exposed through [Oir.text]. Every method
+ * Text-namespace capabilities exposed through [OpenIntelligence.text]. Every method
  * returns either a `suspend` result or a cold [Flow] — cold so that each
  * collector opens a fresh oird session rather than fanning out one
  * inference to many collectors. Cancellation propagates via coroutine

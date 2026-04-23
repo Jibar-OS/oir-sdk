@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
- * Java-facing entry point for [Oir.vision]. Same pattern as the other
+ * Java-facing entry point for [OpenIntelligence.vision]. Same pattern as the other
  * `OirJava*` façades.
  *
  * Image parameters are file paths on the local file system. Apps with
@@ -44,7 +44,7 @@ public object OirJavaVision {
     ): CompletableFuture<ImageDescription> {
         val cf = CompletableFuture<ImageDescription>()
         val job = visionScope.launch {
-            try { cf.complete(Oir.vision.describe(imagePath, prompt)) }
+            try { cf.complete(OpenIntelligence.vision.describe(imagePath, prompt)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -60,7 +60,7 @@ public object OirJavaVision {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job = visionScope.launch {
-            Oir.vision.describeStream(imagePath, prompt)
+            OpenIntelligence.vision.describeStream(imagePath, prompt)
                 .onEach { onChunk.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }
@@ -73,7 +73,7 @@ public object OirJavaVision {
     public fun embed(imagePath: String): CompletableFuture<EmbeddingVector> {
         val cf = CompletableFuture<EmbeddingVector>()
         val job = visionScope.launch {
-            try { cf.complete(Oir.vision.embed(imagePath)) }
+            try { cf.complete(OpenIntelligence.vision.embed(imagePath)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -84,7 +84,7 @@ public object OirJavaVision {
     public fun detect(imagePath: String): CompletableFuture<List<DetectedObject>> {
         val cf = CompletableFuture<List<DetectedObject>>()
         val job = visionScope.launch {
-            try { cf.complete(Oir.vision.detect(imagePath)) }
+            try { cf.complete(OpenIntelligence.vision.detect(imagePath)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -95,7 +95,7 @@ public object OirJavaVision {
     public fun ocr(imagePath: String): CompletableFuture<List<DetectedObject>> {
         val cf = CompletableFuture<List<DetectedObject>>()
         val job = visionScope.launch {
-            try { cf.complete(Oir.vision.ocr(imagePath)) }
+            try { cf.complete(OpenIntelligence.vision.ocr(imagePath)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }

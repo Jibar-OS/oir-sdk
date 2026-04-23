@@ -12,7 +12,7 @@ import com.oir.models.VadState
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Audio-namespace capabilities exposed through [Oir.audio].
+ * Audio-namespace capabilities exposed through [OpenIntelligence.audio].
  *
  * Requires `oir.permission.USE_AUDIO` (dangerous). Apps must request
  * it via the platform runtime-permissions flow; [VadCapability] lives

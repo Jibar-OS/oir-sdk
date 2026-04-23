@@ -12,7 +12,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 /**
- * JUnit 4 rule that swaps [Oir]'s internal implementation for an
+ * JUnit 4 rule that swaps [OpenIntelligence]'s internal implementation for an
  * [OirFake] while the test runs and restores it afterwards. Use
  * inside test classes:
  *
@@ -33,7 +33,7 @@ import org.junit.runners.model.Statement
  * lifetime of the JVM run.
  *
  * The rule is safe to use on JUnit 4; for JUnit 5 compose an
- * equivalent extension around [fake] + [Oir.swapImplementationForTest].
+ * equivalent extension around [fake] + [OpenIntelligence.swapImplementationForTest].
  */
 public class OirTestRule : TestRule {
 
@@ -52,7 +52,7 @@ public class OirTestRule : TestRule {
 
     private fun install() {
         fake.reset()
-        Oir.swapImplementationForTest(
+        OpenIntelligence.swapImplementationForTest(
             OirImpl(
                 text          = fake.text,
                 audio         = fake.audio,
@@ -63,6 +63,6 @@ public class OirTestRule : TestRule {
     }
 
     private fun uninstall() {
-        Oir.resetForTest()
+        OpenIntelligence.resetForTest()
     }
 }

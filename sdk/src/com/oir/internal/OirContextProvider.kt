@@ -12,14 +12,14 @@ import com.oir.Oir
 
 /**
  * Zero-data [ContentProvider] that fires during app start-up. The only
- * purpose of this class is to call [Oir.installContext] before any
- * other app code touches [Oir]. Android instantiates providers before
+ * purpose of this class is to call [OpenIntelligence.installContext] before any
+ * other app code touches [OpenIntelligence]. Android instantiates providers before
  * `Application.onCreate()` runs, which guarantees the SDK is ready by
  * the time the app's first activity/service boots.
  *
  * Apps that prefer explicit initialisation can set
  * `tools:node="remove"` on this provider in their merged manifest and
- * call `Oir.installContext(context)` themselves in
+ * call `OpenIntelligence.installContext(context)` themselves in
  * `Application.onCreate()`.
  *
  * Why a [ContentProvider] and not
@@ -33,7 +33,7 @@ public class OirContextProvider : ContentProvider() {
     override fun onCreate(): Boolean {
         val ctx = context
             ?: return false   // extremely unusual; nothing we can do
-        Oir.installContext(ctx.applicationContext ?: ctx)
+        OpenIntelligence.installContext(ctx.applicationContext ?: ctx)
         return true
     }
 

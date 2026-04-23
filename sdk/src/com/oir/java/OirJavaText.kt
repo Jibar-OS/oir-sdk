@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
- * Java-facing entry point for [Oir.text]. Mirrors every method on
+ * Java-facing entry point for [OpenIntelligence.text]. Mirrors every method on
  * [com.oir.TextCapabilities] but returns [CompletableFuture] instead
  * of `suspend`, and takes callback triples instead of `Flow`.
  *
@@ -79,7 +79,7 @@ public object OirJavaText {
         val cf = CompletableFuture<TextCompletion>()
         val job: Job = javaScope.launch {
             try {
-                cf.complete(Oir.text.complete(prompt, options))
+                cf.complete(OpenIntelligence.text.complete(prompt, options))
             } catch (oe: OirException) {
                 cf.completeExceptionally(oe)
             } catch (t: Throwable) {
@@ -112,7 +112,7 @@ public object OirJavaText {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job: Job = javaScope.launch {
-            Oir.text.completeStream(prompt, options)
+            OpenIntelligence.text.completeStream(prompt, options)
                 .onEach { onChunk.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }
@@ -125,7 +125,7 @@ public object OirJavaText {
     public fun embed(text: String): CompletableFuture<FloatArray> {
         val cf = CompletableFuture<FloatArray>()
         val job = javaScope.launch {
-            try { cf.complete(Oir.text.embed(text)) }
+            try { cf.complete(OpenIntelligence.text.embed(text)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -136,7 +136,7 @@ public object OirJavaText {
     public fun classify(text: String): CompletableFuture<ScoreVector> {
         val cf = CompletableFuture<ScoreVector>()
         val job = javaScope.launch {
-            try { cf.complete(Oir.text.classify(text)) }
+            try { cf.complete(OpenIntelligence.text.classify(text)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -150,7 +150,7 @@ public object OirJavaText {
     ): CompletableFuture<ScoreVector> {
         val cf = CompletableFuture<ScoreVector>()
         val job = javaScope.launch {
-            try { cf.complete(Oir.text.rerank(query, candidates)) }
+            try { cf.complete(OpenIntelligence.text.rerank(query, candidates)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -164,7 +164,7 @@ public object OirJavaText {
     ): CompletableFuture<TextCompletion> {
         val cf = CompletableFuture<TextCompletion>()
         val job = javaScope.launch {
-            try { cf.complete(Oir.text.translate(text, options)) }
+            try { cf.complete(OpenIntelligence.text.translate(text, options)) }
             catch (t: Throwable) { cf.completeExceptionally(t) }
         }
         cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
@@ -180,7 +180,7 @@ public object OirJavaText {
         onError:    java.util.function.Consumer<Throwable>,
     ): AutoCloseable {
         val job = javaScope.launch {
-            Oir.text.translateStream(text, options)
+            OpenIntelligence.text.translateStream(text, options)
                 .onEach { onChunk.accept(it) }
                 .catch { onError.accept(it) }
                 .onCompletion { cause -> if (cause == null) onComplete.run() }
