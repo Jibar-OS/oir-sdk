@@ -1,0 +1,70 @@
+// v0.7 SDK — AOSP Soong wrapper for the `oir_sdk` Kotlin library.
+//
+// Source of truth for the Kotlin code is the off-tree Gradle module at
+// `oir_sdk/library/src/main/kotlin/` — the v0.7 apply script rsyncs
+// that into `frameworks/base/oir_sdk/src/` and the manifest into
+// `frameworks/base/oir_sdk/AndroidManifest.xml` before the build sees
+// any of this. Keeping one source of truth (the Gradle module) avoids
+// hand-drift between the off-tree .aar consumers use and the on-tree
+// build that `oir_sdk_aosp` links against.
+//
+// Module kind: `android_library`, not `java_library`. The SDK ships
+// `AndroidManifest.xml` declaring `OirContextProvider` (a zero-data
+// ContentProvider used for auto-init so apps don't have to call
+// `Oir.installContext()` from `Application.onCreate()`). Only
+// `android_library` performs manifest merging into consumer APKs, so
+// that's the right primitive even though the compiled output is pure
+// bytecode — the AOSP companion `oir_sdk_aosp` consumes just the
+// classes via `static_libs`, not the manifest, which is fine.
+//
+// sdk_version / min_sdk_version match the Gradle module's
+// `compileSdk = 35` / `minSdk = 31`. Staying on `system_current` (and
+// NOT `module_current` or `current`) is deliberate: the SDK needs the
+// `system_server`-visible bits of the platform SDK for a few
+// capability-name sealed classes, but must NOT reach for hidden APIs
+// — that would break off-tree Gradle builds.
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+android_library {
+    name: "oir_sdk",
+    sdk_version: "system_current",
+    min_sdk_version: "31",
+
+    manifest: "AndroidManifest.xml",
+
+    srcs: [
+        "src/**/*.kt",
+    ],
+
+    static_libs: [
+        // Hard constraint mirrored from the Gradle build: stdlib (implicit)
+        // + coroutines only. No AndroidX. If you find yourself adding an
+        // AndroidX dep here, reconsider — the SDK replicates the small
+        // pieces it needs (ContentProvider auto-init) on purpose so apps
+        // without AndroidX aren't forced to pull it in.
+        "kotlinx-coroutines-core-jvm",
+        "kotlinx-coroutines-android",
+    ],
+
+    libs: [
+        // `com.oir.testing.OirTestRule` references JUnit 4's `TestRule`.
+        // compileOnly on the Gradle side — consumer apps pull junit
+        // themselves via `testImplementation`. `libs:` (not `static_libs:`)
+        // mirrors compileOnly so junit isn't dragged into the shipping jar.
+        "junit",
+    ],
+
+    kotlincflags: [
+        // OirBinderAdapterProvider has `fun wrap(IBinder)` with a default
+        // implementation; `-Xjvm-default=all` makes that compile as a JVM
+        // default interface method rather than a DefaultImpls synthetic
+        // class. Matches the companion module and the Gradle build.
+        "-Xjvm-default=all",
+    ],
+
+    apex_available: [
+        "//apex_available:platform",
+    ],
+}

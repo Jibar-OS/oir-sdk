@@ -1,0 +1,54 @@
+// v0.7 SDK AOSP companion module.
+//
+// Bridges the public oir_sdk library's internal OirBinderAdapter SPI
+// to the AIDL-generated android.oir.IOIRService.Stub. Separate module
+// from oir_sdk itself so the SDK can compile off-tree against the
+// Android SDK jar (no AIDL-gen stubs available); on AOSP, this
+// companion is linked into any app that depends on oir_sdk and
+// registered via META-INF/services so oir_sdk's ServiceLoader finds it.
+//
+// Build model: java_library (not java_sdk_library) because it ships
+// inside app APKs / system_server consumers as bytecode, not as a
+// versioned SDK surface. Apps pull it in implicitly via their
+// oir_sdk dep chain — no explicit declaration needed beyond the
+// oir_sdk rule.
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+java_library {
+    name: "oir_sdk_aosp",
+    // `platform_apis: true` (not sdk_version) because the companion
+    // imports `android.oir.IOIRService.Stub` which is `@hide`. @hide
+    // AIDL-generated classes are only visible to modules compiled
+    // against the full platform classpath — which is what
+    // platform_apis selects. Attempting `sdk_version: "system_current"`
+    // + explicit `libs: ["framework-minus-apex"]` failed with a
+    // visibility error (framework-minus-apex restricts who can depend
+    // on it directly). This module is platform-internal and not
+    // apex-shipped, so there's no sdk_version contract to preserve.
+    platform_apis: true,
+
+    srcs: [
+        "src/**/*.kt",
+    ],
+    java_resource_dirs: [
+        "res",
+    ],
+    // META-INF/services/com.oir.internal.OirBinderAdapterProvider
+    // surfaces from `res/META-INF/...` via java_resource_dirs so
+    // ServiceLoader sees it at runtime. (`resource_dirs` is
+    // android_library-only; `java_resource_dirs` is the java_library
+    // equivalent and packs files verbatim into the jar — our META-INF
+    // layout under res/ lands at the expected path.)
+
+    static_libs: [
+        "oir_sdk",               // public SPI: OirBinderAdapter / Provider / TokenStreamOptions
+        "kotlinx-coroutines-core-jvm",
+        "kotlinx-coroutines-android",
+    ],
+
+    kotlincflags: [
+        "-Xjvm-default=all",
+    ],
+}

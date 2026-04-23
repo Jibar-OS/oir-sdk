@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Minimal manifest. The SDK auto-initialises via OirContextProvider —
+  a zero-data ContentProvider that the Android framework instantiates
+  during app startup, which gives us a Context reference without
+  requiring every app to call Oir.installContext() manually.
+
+  Applications that prefer explicit initialisation can set
+  tools:node="remove" on this provider and call
+  Oir.installContext(context) in Application.onCreate() instead.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.oir">
+
+    <application>
+        <provider
+            android:name="com.oir.internal.OirContextProvider"
+            android:authorities="${applicationId}.oir_init"
+            android:exported="false"
+            android:multiprocess="false"
+            android:syncable="false" />
+    </application>
+</manifest>
