@@ -37,7 +37,7 @@ import com.oir.models.CapabilityStatus
  * AndroidX. Apps opting into AndroidX still work — the SDK does not
  * propagate anything onto the classpath you do not already import.
  *
- * **Thread-safety:** `Oir` is a thread-safe singleton. Call the
+ * **Thread-safety:** `OpenIntelligence` is a thread-safe singleton. Call the
  * suspend / Flow methods from any coroutine scope; the implementation
  * serialises through a dedicated binder dispatcher internally.
  *
