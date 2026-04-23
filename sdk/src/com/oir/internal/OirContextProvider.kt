@@ -8,7 +8,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import com.oir.Oir
+import com.oir.OpenIntelligence
 
 /**
  * Zero-data [ContentProvider] that fires during app start-up. The only

@@ -4,7 +4,7 @@
  */
 package com.oir.java
 
-import com.oir.Oir
+import com.oir.OpenIntelligence
 import com.oir.models.DetectedObject
 import com.oir.models.EmbeddingVector
 import com.oir.models.ImageDescription

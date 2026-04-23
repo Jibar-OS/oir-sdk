@@ -4,7 +4,7 @@
  */
 package com.oir.java
 
-import com.oir.Oir
+import com.oir.OpenIntelligence
 import com.oir.models.AudioBuffer
 import com.oir.models.AudioChunk
 import com.oir.models.Transcript

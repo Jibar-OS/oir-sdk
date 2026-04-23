@@ -4,7 +4,7 @@
  */
 package com.oir.testing
 
-import com.oir.Oir
+import com.oir.OpenIntelligence
 import com.oir.internal.OirImpl
 import com.oir.internal.RunnableProbe
 import org.junit.rules.TestRule

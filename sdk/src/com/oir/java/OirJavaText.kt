@@ -4,7 +4,7 @@
  */
 package com.oir.java
 
-import com.oir.Oir
+import com.oir.OpenIntelligence
 import com.oir.errors.OirException
 import com.oir.models.CompletionOptions
 import com.oir.models.ScoreVector
