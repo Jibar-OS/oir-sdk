@@ -113,7 +113,7 @@ public class FakeTextCapabilities internal constructor() : TextCapabilities {
 
     // -------- TextCapabilities implementation --------
 
-    override suspend fun complete(prompt: String, options: CompletionOptions): TextCompletion {
+    override suspend fun complete(prompt: String, options: CompletionOptions, retryThrottle: Int): TextCompletion {
         completeCalls += prompt to options
         return completeHandler(prompt, options)
     }
@@ -121,19 +121,19 @@ public class FakeTextCapabilities internal constructor() : TextCapabilities {
         completeStreamCalls += prompt to options
         return completeStreamHandler(prompt, options)
     }
-    override suspend fun embed(text: String): FloatArray {
+    override suspend fun embed(text: String, retryThrottle: Int): FloatArray {
         embedCalls += text
         return embedHandler(text)
     }
-    override suspend fun classify(text: String): ScoreVector {
+    override suspend fun classify(text: String, retryThrottle: Int): ScoreVector {
         classifyCalls += text
         return classifyHandler(text)
     }
-    override suspend fun rerank(query: String, candidates: List<String>): ScoreVector {
+    override suspend fun rerank(query: String, candidates: List<String>, retryThrottle: Int): ScoreVector {
         rerankCalls += query to candidates
         return rerankHandler(query, candidates)
     }
-    override suspend fun translate(text: String, options: TranslationOptions): TextCompletion {
+    override suspend fun translate(text: String, options: TranslationOptions, retryThrottle: Int): TextCompletion {
         translateCalls += text to options
         return translateHandler(text, options)
     }
@@ -177,7 +177,7 @@ public class FakeAudioCapabilities internal constructor() : AudioCapabilities {
     public fun whenSynthesize(handler: suspend (String) -> AudioBuffer) { synthesizeHandler = handler }
     public fun whenSynthesizeStream(handler: (String) -> Flow<AudioChunk>) { synthesizeStreamHandler = handler }
 
-    override suspend fun transcribe(pcmPath: String): Transcript {
+    override suspend fun transcribe(pcmPath: String, retryThrottle: Int): Transcript {
         transcribeCalls += pcmPath
         return transcribeHandler(pcmPath)
     }
@@ -185,7 +185,7 @@ public class FakeAudioCapabilities internal constructor() : AudioCapabilities {
         transcribeStreamCalls += pcmPath
         return transcribeStreamHandler(pcmPath)
     }
-    override suspend fun synthesize(text: String): AudioBuffer {
+    override suspend fun synthesize(text: String, retryThrottle: Int): AudioBuffer {
         synthesizeCalls += text
         return synthesizeHandler(text)
     }
@@ -245,7 +245,7 @@ public class FakeVisionCapabilities internal constructor() : VisionCapabilities 
     public fun whenDetect(handler: suspend (String) -> List<DetectedObject>) { detectHandler = handler }
     public fun whenOcr(handler: suspend (String) -> List<DetectedObject>) { ocrHandler = handler }
 
-    override suspend fun describe(imagePath: String, prompt: String): ImageDescription {
+    override suspend fun describe(imagePath: String, prompt: String, retryThrottle: Int): ImageDescription {
         describeCalls += imagePath to prompt
         return describeHandler(imagePath, prompt)
     }
@@ -253,15 +253,15 @@ public class FakeVisionCapabilities internal constructor() : VisionCapabilities 
         describeStreamCalls += imagePath to prompt
         return describeStreamHandler(imagePath, prompt)
     }
-    override suspend fun embed(imagePath: String): EmbeddingVector {
+    override suspend fun embed(imagePath: String, retryThrottle: Int): EmbeddingVector {
         embedCalls += imagePath
         return embedHandler(imagePath)
     }
-    override suspend fun detect(imagePath: String): List<DetectedObject> {
+    override suspend fun detect(imagePath: String, retryThrottle: Int): List<DetectedObject> {
         detectCalls += imagePath
         return detectHandler(imagePath)
     }
-    override suspend fun ocr(imagePath: String): List<DetectedObject> {
+    override suspend fun ocr(imagePath: String, retryThrottle: Int): List<DetectedObject> {
         ocrCalls += imagePath
         return ocrHandler(imagePath)
     }

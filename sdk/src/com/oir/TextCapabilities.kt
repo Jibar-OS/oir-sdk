@@ -37,6 +37,7 @@ public interface TextCapabilities {
     public suspend fun complete(
         prompt: String,
         options: CompletionOptions = CompletionOptions(),
+        retryThrottle: Int = 0,
     ): TextCompletion
 
     /**
@@ -53,7 +54,7 @@ public interface TextCapabilities {
      * Submit [text] to `text.embed`. Returns the pooled embedding
      * vector as a [FloatArray] (dim = model-dependent).
      */
-    public suspend fun embed(text: String): FloatArray
+    public suspend fun embed(text: String, retryThrottle: Int = 0): FloatArray
 
     /**
      * Submit [text] to `text.classify`. Returns per-label softmax
@@ -65,7 +66,7 @@ public interface TextCapabilities {
      * no classifier model is baked on this device (ship-empty policy
      * for v0.6).
      */
-    public suspend fun classify(text: String): ScoreVector
+    public suspend fun classify(text: String, retryThrottle: Int = 0): ScoreVector
 
     /**
      * Submit [query] + [candidates] to `text.rerank`. Returns one
@@ -75,6 +76,7 @@ public interface TextCapabilities {
     public suspend fun rerank(
         query: String,
         candidates: List<String>,
+        retryThrottle: Int = 0,
     ): ScoreVector
 
     /**
@@ -89,6 +91,7 @@ public interface TextCapabilities {
     public suspend fun translate(
         text: String,
         options: TranslationOptions,
+        retryThrottle: Int = 0,
     ): TextCompletion
 
     /** Streaming variant of [translate]. */

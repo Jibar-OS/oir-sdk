@@ -23,12 +23,15 @@ internal class TextCapabilitiesImpl(
     override suspend fun complete(
         prompt: String,
         options: CompletionOptions,
-    ): TextCompletion = TokenStreamCollector.awaitFull(
-        adapter    = adapter,
-        capability = "text.complete",
-        prompt     = prompt,
-        options    = options.toTokenStream(),
-    )
+        retryThrottle: Int,
+    ): TextCompletion = retryOnThrottle(retryThrottle) {
+        TokenStreamCollector.awaitFull(
+            adapter    = adapter,
+            capability = "text.complete",
+            prompt     = prompt,
+            options    = options.toTokenStream(),
+        )
+    }
 
     override fun completeStream(
         prompt: String,
@@ -46,31 +49,41 @@ internal class TextCapabilitiesImpl(
         awaitClose { adapter.cancel(handle) }
     }
 
-    override suspend fun embed(text: String): FloatArray =
-        VectorAwaiter.await(adapter, capability = "text.embed", input = text)
+    override suspend fun embed(text: String, retryThrottle: Int): FloatArray =
+        retryOnThrottle(retryThrottle) {
+            VectorAwaiter.await(adapter, capability = "text.embed", input = text)
+        }
 
-    override suspend fun classify(text: String): ScoreVector =
-        ScoreVector(VectorAwaiter.await(adapter, capability = "text.classify", input = text))
+    override suspend fun classify(text: String, retryThrottle: Int): ScoreVector =
+        retryOnThrottle(retryThrottle) {
+            ScoreVector(VectorAwaiter.await(adapter, capability = "text.classify", input = text))
+        }
 
     override suspend fun rerank(
         query: String,
         candidates: List<String>,
-    ): ScoreVector = RerankAwaiter.await(
-        adapter    = adapter,
-        capability = "text.rerank",
-        query      = query,
-        candidates = candidates,
-    )
+        retryThrottle: Int,
+    ): ScoreVector = retryOnThrottle(retryThrottle) {
+        RerankAwaiter.await(
+            adapter    = adapter,
+            capability = "text.rerank",
+            query      = query,
+            candidates = candidates,
+        )
+    }
 
     override suspend fun translate(
         text: String,
         options: TranslationOptions,
-    ): TextCompletion = TokenStreamCollector.awaitFull(
-        adapter    = adapter,
-        capability = "text.translate",
-        prompt     = text,
-        options    = options.toTokenStream(),
-    )
+        retryThrottle: Int,
+    ): TextCompletion = retryOnThrottle(retryThrottle) {
+        TokenStreamCollector.awaitFull(
+            adapter    = adapter,
+            capability = "text.translate",
+            prompt     = text,
+            options    = options.toTokenStream(),
+        )
+    }
 
     override fun translateStream(
         text: String,

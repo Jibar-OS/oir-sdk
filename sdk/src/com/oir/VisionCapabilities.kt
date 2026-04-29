@@ -33,6 +33,7 @@ public interface VisionCapabilities {
     public suspend fun describe(
         imagePath: String,
         prompt: String = "",
+        retryThrottle: Int = 0,
     ): ImageDescription
 
     /** Streaming variant of [describe] — tokens arrive as generated. */
@@ -45,14 +46,14 @@ public interface VisionCapabilities {
      * Embed the image at [imagePath] to a pooled feature vector via
      * `vision.embed` (SigLIP default). Dim is model-dependent.
      */
-    public suspend fun embed(imagePath: String): EmbeddingVector
+    public suspend fun embed(imagePath: String, retryThrottle: Int = 0): EmbeddingVector
 
     /**
      * Run object detection over [imagePath]. Returns all kept boxes
      * after IoU-NMS with thresholds from `vision.detect.*` tuning
      * knobs (OEM-overridable).
      */
-    public suspend fun detect(imagePath: String): List<DetectedObject>
+    public suspend fun detect(imagePath: String, retryThrottle: Int = 0): List<DetectedObject>
 
     /**
      * Run OCR over [imagePath]. Returns one [DetectedObject] per
@@ -61,5 +62,5 @@ public interface VisionCapabilities {
      * it, [com.oir.errors.OirCapabilityUnavailableException] is
      * thrown.
      */
-    public suspend fun ocr(imagePath: String): List<DetectedObject>
+    public suspend fun ocr(imagePath: String, retryThrottle: Int = 0): List<DetectedObject>
 }

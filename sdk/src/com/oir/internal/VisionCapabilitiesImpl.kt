@@ -25,13 +25,14 @@ internal class VisionCapabilitiesImpl(
     override suspend fun describe(
         imagePath: String,
         prompt: String,
-    ): ImageDescription {
+        retryThrottle: Int,
+    ): ImageDescription = retryOnThrottle(retryThrottle) {
         // vision.describe wire format: "<imagePath> | <prompt>" when both
         // present, bare "<imagePath>" when prompt is empty. Worker
         // splits on " | ".
         val wireFormat = if (prompt.isEmpty()) imagePath else "$imagePath | $prompt"
         val buf = StringBuilder()
-        return suspendCancellableCoroutine { cont ->
+        suspendCancellableCoroutine<ImageDescription> { cont ->
             val startedAt = System.currentTimeMillis()
             var firstTokenMs = -1L
             val handle = adapter.submitTokenStream(
@@ -81,19 +82,24 @@ internal class VisionCapabilitiesImpl(
         awaitClose { adapter.cancel(handle) }
     }
 
-    override suspend fun embed(imagePath: String): EmbeddingVector {
-        // vision.embed uses the Vector shape; the wire format passes the
-        // imagePath through the text parameter (see OIRService's
-        // submitEmbedText routing for vision.embed capabilities).
-        val v = VectorAwaiter.await(adapter, capability = "vision.embed", input = imagePath)
-        return EmbeddingVector(v)
-    }
+    override suspend fun embed(imagePath: String, retryThrottle: Int): EmbeddingVector =
+        retryOnThrottle(retryThrottle) {
+            // vision.embed uses the Vector shape; the wire format passes the
+            // imagePath through the text parameter (see OIRService's
+            // submitEmbedText routing for vision.embed capabilities).
+            val v = VectorAwaiter.await(adapter, capability = "vision.embed", input = imagePath)
+            EmbeddingVector(v)
+        }
 
-    override suspend fun detect(imagePath: String): List<DetectedObject> =
-        BoundingBoxAwaiter.await(adapter, capability = "vision.detect", imagePath = imagePath)
+    override suspend fun detect(imagePath: String, retryThrottle: Int): List<DetectedObject> =
+        retryOnThrottle(retryThrottle) {
+            BoundingBoxAwaiter.await(adapter, capability = "vision.detect", imagePath = imagePath)
+        }
 
-    override suspend fun ocr(imagePath: String): List<DetectedObject> =
-        BoundingBoxAwaiter.await(adapter, capability = "vision.ocr", imagePath = imagePath)
+    override suspend fun ocr(imagePath: String, retryThrottle: Int): List<DetectedObject> =
+        retryOnThrottle(retryThrottle) {
+            BoundingBoxAwaiter.await(adapter, capability = "vision.ocr", imagePath = imagePath)
+        }
 }
 
 /**

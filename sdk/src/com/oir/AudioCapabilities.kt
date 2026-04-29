@@ -27,7 +27,7 @@ public interface AudioCapabilities {
      * Transcribe the audio at [pcmPath] (PCM16 LE 16 kHz mono file).
      * Returns the fully-assembled transcript.
      */
-    public suspend fun transcribe(pcmPath: String): Transcript
+    public suspend fun transcribe(pcmPath: String, retryThrottle: Int = 0): Transcript
 
     /** Streaming variant — transcript chunks arrive as whisper emits them. */
     public fun transcribeStream(pcmPath: String): Flow<TranscriptChunk>
@@ -42,7 +42,7 @@ public interface AudioCapabilities {
      * OEM has not baked a Piper voice + `<voice>.phonemes.json`
      * companion on this device.
      */
-    public suspend fun synthesize(text: String): AudioBuffer
+    public suspend fun synthesize(text: String, retryThrottle: Int = 0): AudioBuffer
 
     /** Streaming variant of [synthesize] — 100 ms PCM chunks. */
     public fun synthesizeStream(text: String): Flow<AudioChunk>

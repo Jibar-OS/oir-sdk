@@ -26,33 +26,33 @@ internal class AudioCapabilitiesImpl(
 
     override val vad: VadCapability = VadCapabilityImpl(client)
 
-    override suspend fun transcribe(pcmPath: String): Transcript {
-        val buf = StringBuilder()
-        // audio.transcribe is wired through the TokenStream shape on the
-        // worker (whisper emits segments as tokens) so we reuse the
-        // token-stream adapter method.
-        return suspendCancellableCoroutine { cont ->
-            val startedAt = System.currentTimeMillis()
-            val handle = adapter.submitTokenStream(
-                capability = "audio.transcribe",
-                prompt     = pcmPath,     // worker treats prompt as the audio path for audio.*
-                options    = TokenStreamOptions(),
-                onStart    = { },
-                onToken    = { text, _ -> buf.append(text) },
-                onComplete = { totalMs ->
-                    if (cont.isActive) cont.resume(
-                        Transcript(text = buf.toString(), totalMs = totalMs),
-                    )
-                },
-                onError    = { code, msg ->
-                    if (cont.isActive) cont.resumeWithException(
-                        ErrorMapping.toException(code, msg, "audio.transcribe"),
-                    )
-                },
-            )
-            cont.invokeOnCancellation { adapter.cancel(handle) }
+    override suspend fun transcribe(pcmPath: String, retryThrottle: Int): Transcript =
+        retryOnThrottle(retryThrottle) {
+            val buf = StringBuilder()
+            // audio.transcribe is wired through the TokenStream shape on the
+            // worker (whisper emits segments as tokens) so we reuse the
+            // token-stream adapter method.
+            suspendCancellableCoroutine<Transcript> { cont ->
+                val handle = adapter.submitTokenStream(
+                    capability = "audio.transcribe",
+                    prompt     = pcmPath,     // worker treats prompt as the audio path for audio.*
+                    options    = TokenStreamOptions(),
+                    onStart    = { },
+                    onToken    = { text, _ -> buf.append(text) },
+                    onComplete = { totalMs ->
+                        if (cont.isActive) cont.resume(
+                            Transcript(text = buf.toString(), totalMs = totalMs),
+                        )
+                    },
+                    onError    = { code, msg ->
+                        if (cont.isActive) cont.resumeWithException(
+                            ErrorMapping.toException(code, msg, "audio.transcribe"),
+                        )
+                    },
+                )
+                cont.invokeOnCancellation { adapter.cancel(handle) }
+            }
         }
-    }
 
     override fun transcribeStream(pcmPath: String): Flow<TranscriptChunk> = callbackFlow {
         val handle = adapter.submitTokenStream(
@@ -69,26 +69,29 @@ internal class AudioCapabilitiesImpl(
         awaitClose { adapter.cancel(handle) }
     }
 
-    override suspend fun synthesize(text: String): AudioBuffer = suspendCancellableCoroutine { cont ->
-        val chunks = mutableListOf<AudioChunk>()
-        val handle = adapter.submitAudioStream(
-            capability = "audio.synthesize",
-            text       = text,
-            onChunk    = { chunk -> chunks.add(chunk) },
-            onComplete = { totalMs ->
-                if (cont.isActive) {
-                    val merged = mergeChunks(chunks, totalMs)
-                    cont.resume(merged)
-                }
-            },
-            onError    = { code, msg ->
-                if (cont.isActive) cont.resumeWithException(
-                    ErrorMapping.toException(code, msg, "audio.synthesize"),
+    override suspend fun synthesize(text: String, retryThrottle: Int): AudioBuffer =
+        retryOnThrottle(retryThrottle) {
+            suspendCancellableCoroutine<AudioBuffer> { cont ->
+                val chunks = mutableListOf<AudioChunk>()
+                val handle = adapter.submitAudioStream(
+                    capability = "audio.synthesize",
+                    text       = text,
+                    onChunk    = { chunk -> chunks.add(chunk) },
+                    onComplete = { totalMs ->
+                        if (cont.isActive) {
+                            val merged = mergeChunks(chunks, totalMs)
+                            cont.resume(merged)
+                        }
+                    },
+                    onError    = { code, msg ->
+                        if (cont.isActive) cont.resumeWithException(
+                            ErrorMapping.toException(code, msg, "audio.synthesize"),
+                        )
+                    },
                 )
-            },
-        )
-        cont.invokeOnCancellation { adapter.cancel(handle) }
-    }
+                cont.invokeOnCancellation { adapter.cancel(handle) }
+            }
+        }
 
     override fun synthesizeStream(text: String): Flow<AudioChunk> = callbackFlow {
         val handle = adapter.submitAudioStream(
